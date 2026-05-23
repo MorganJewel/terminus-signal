@@ -724,6 +724,64 @@
     to   { top: 100vh; }
   }
 
+
+  /* DRAG TILES */
+  .drag-tile {
+    background: #020702;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.6rem 0.5rem;
+    cursor: grab;
+    user-select: none;
+    text-align: center;
+    letter-spacing: 0.05em;
+    transition: background 0.15s, transform 0.15s;
+    touch-action: none;
+    min-width: 90px;
+  }
+  .drag-tile:active { cursor: grabbing; transform: scale(1.05); background: var(--dark-green); }
+  .drag-tile.dragging { opacity: 0.4; }
+  .drag-tile.used { opacity: 0.3; border-color: var(--border); cursor: not-allowed; }
+
+  .drop-slot {
+    background: #020702;
+    border: 2px dashed var(--border);
+    padding: 0.6rem 0.5rem;
+    min-width: 100px;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .drop-slot.over { border-color: var(--green); background: var(--dark-green); }
+  .drop-slot.correct { border-color: #0ff; border-style: solid; }
+  .drop-slot.wrong { border-color: var(--red); animation: shake 0.3s; }
+
+  .slot-letter {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+  }
+  .slot-binary {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--dim-green);
+    min-height: 1rem;
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  @media (max-width: 600px) {
+    .drag-tile { min-width: 75px; font-size: 0.55rem; padding: 0.5rem 0.3rem; }
+    .drop-slot { min-width: 70px; padding: 0.5rem 0.3rem; }
+    .slot-letter { font-size: 1rem; }
+  }
+
   /* ===================== MOBILE ===================== */
   @media (max-width: 600px) {
     .container { padding: 0 1rem 3rem; }
@@ -871,15 +929,16 @@
       <div class="open-hint">[ CLICK TO DECODE ]</div>
     </div>
 
-    <!-- DROP 2 - LOCKED -->
-    <div class="cipher-card locked">
+    <!-- DROP 2 - LIVE -->
+    <div class="cipher-card active" onclick="openModal(2)">
       <div class="card-header">
         <span class="drop-label">// DROP_02 //</span>
-        <span class="drop-status status-locked">TRANSMITTING MAY 23</span>
+        <span class="drop-status status-live">LIVE</span>
       </div>
-      <div class="cipher-date">TRANSMITS: MAY 23, 2026</div>
+      <div class="cipher-date">TRANSMITTED: MAY 23, 2026</div>
       <div class="cipher-title">THE SECOND MESSAGE</div>
-      <div class="cipher-desc">Signal incoming. Stand by.<br>The machines are listening.</div>
+      <div class="cipher-desc">The machines speak in two. Zero and one.<br>Read what they say.</div>
+      <div class="open-hint">[ CLICK TO DECODE ]</div>
     </div>
 
     <!-- DROP 3 - LOCKED -->
@@ -909,6 +968,79 @@
     terminus-signal.com // all signals monitored
   </footer>
 
+</div>
+
+
+<!-- ===== MODAL DROP 2: BINARY CIPHER ===== -->
+<div class="cipher-modal" id="modal-2">
+  <div class="modal-inner">
+    <button class="modal-close" onclick="closeModal()">[ CLOSE ]</button>
+
+    <div class="modal-title">// DROP_02 // THE SECOND MESSAGE</div>
+    <div class="modal-date">TRANSMITTED: MAY 23, 2026 &nbsp;|&nbsp; TYPE: BINARY / ASCII</div>
+
+    <div class="cipher-text-display" style="font-size:0.8rem; word-break:break-all; line-height:2.2; letter-spacing:0.05em;">
+      01010100 01000101 01010011 01010100 00100000 01001111 01010101 01010100 00100000 01001111 01010101 01010010 00100000 01010100 01000101 01000011 01001000 00101110 00100000 01001101 01000001 01000100 01000101 00100000 01001010 01010101 01010011 01010100 00100000 01000110 01001111 01010010 00100000 01011001 01001111 01010101 00101110
+    </div>
+
+    <div style="font-size:0.7rem; color:var(--dim-green); letter-spacing:0.2em; margin: 0.5rem 0 1.5rem;">
+      // THE MESSAGE IS ALMOST DECODED. ONE WORD REMAINS. DRAG THE BINARY TILES INTO THE CORRECT SLOTS. //
+    </div>
+
+    <!-- PARTIAL REVEAL -->
+    <div style="background:#020702; border:1px solid var(--border); padding:1.2rem; margin-bottom:1.5rem; font-family:'VT323',monospace; font-size:1.3rem; line-height:2; letter-spacing:0.05em; color:var(--white);">
+      TEST OUT OUR&nbsp;<span id="tech-reveal" style="letter-spacing:0.1em;"></span>. MADE JUST FOR YOU.
+    </div>
+
+    <!-- DRAG SLOTS -->
+    <div style="margin-bottom:1.5rem;">
+      <div style="font-size:0.65rem; letter-spacing:0.3em; color:var(--dim-green); margin-bottom:0.8rem;">// DRAG EACH BINARY TILE TO ITS MATCHING SLOT //</div>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;" id="drop-slots">
+        <div class="drop-slot" data-letter="T" ondragover="allowDrop(event)" ondrop="dropTile(event)" ontouchend="touchDrop(event)">
+          <div class="slot-letter">T</div>
+          <div class="slot-binary">?</div>
+        </div>
+        <div class="drop-slot" data-letter="E" ondragover="allowDrop(event)" ondrop="dropTile(event)" ontouchend="touchDrop(event)">
+          <div class="slot-letter">E</div>
+          <div class="slot-binary">?</div>
+        </div>
+        <div class="drop-slot" data-letter="C" ondragover="allowDrop(event)" ondrop="dropTile(event)" ontouchend="touchDrop(event)">
+          <div class="slot-letter">C</div>
+          <div class="slot-binary">?</div>
+        </div>
+        <div class="drop-slot" data-letter="H" ondragover="allowDrop(event)" ondrop="dropTile(event)" ontouchend="touchDrop(event)">
+          <div class="slot-letter">H</div>
+          <div class="slot-binary">?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DRAGGABLE TILES -->
+    <div style="margin-bottom:1.5rem;">
+      <div style="font-size:0.65rem; letter-spacing:0.3em; color:var(--dim-green); margin-bottom:0.8rem;">// BINARY TILES — DRAG TO MATCH //</div>
+      <div style="display:flex; gap:0.6rem; flex-wrap:wrap; justify-content:center;" id="tile-bank"></div>
+    </div>
+
+    <!-- HINT -->
+    <div class="tool-section">
+      <div class="tool-header" onclick="toggleTool('hint2-tool')">
+        <span>// HINT //</span>
+        <span id="hint2-toggle">▼ REVEAL</span>
+      </div>
+      <div class="tool-body" id="hint2-tool" style="display:none">
+        <div class="hint-box" style="margin:0;">
+          <span class="hint-label">// HINT //</span>
+          T = 01010100 &nbsp;|&nbsp; E = 01000101 &nbsp;|&nbsp; C = 01000011 &nbsp;|&nbsp; H = 01001000
+        </div>
+      </div>
+    </div>
+
+    <div class="answer-section" id="ans2-section" style="display:none">
+      <span class="answer-label" style="color:#0ff;">// SIGNAL DECODED. FIRST LETTER ACQUIRED. //</span>
+      <div style="font-family:VT323,monospace; font-size:1.4rem; color:#0ff; margin-top:0.5rem;" id="drop2-solved-msg"></div>
+    </div>
+
+  </div>
 </div>
 
 <!-- ===== MODAL DROP 1: CAESAR CIPHER ===== -->
@@ -1075,6 +1207,7 @@ function openModal(n) {
   document.getElementById('modal-' + n).classList.add('open');
   document.body.style.overflow = 'hidden';
   if (n === 1) drawWheel(shift);
+  if (n === 2) initDragPuzzle();
 }
 
 function closeModal() {
@@ -1086,18 +1219,6 @@ function closeModal() {
 document.querySelectorAll('.cipher-modal').forEach(m => {
   m.addEventListener('click', e => { if (e.target === m) closeModal(); });
 });
-
-// ===================== TOOL TOGGLE =====================
-function toggleTool(id) {
-  const el = document.getElementById(id);
-  const tog = document.getElementById(id.replace('tool','toggle').replace('-tool','-toggle'));
-  const isOpen = el.style.display !== 'none';
-  el.style.display = isOpen ? 'none' : 'block';
-  if (id === 'caesar-tool') {
-    document.getElementById('caesar-toggle').textContent = isOpen ? '▼ OPEN' : '▲ CLOSE';
-    if (!isOpen) drawWheel(shift);
-  }
-}
 
 // ===================== CAESAR WHEEL =====================
 let shift = 0;
@@ -1186,7 +1307,7 @@ function applyCaesar() {
 // ===================== ANSWERS =====================
 const answers = {
   1: 'A WALK INSIDE A COMPUTER',
-  2: null,
+  2: 'TEST OUT OUR TECH. MADE JUST FOR YOU.',
   3: null,
 };
 
@@ -1258,6 +1379,158 @@ setTimeout(() => {
   const el = document.getElementById('drop1-cipher');
   glitchText(el, 'G CGRQ OTYOJK G IUSVAZKX', 1500);
 }, 2000);
+
+// ===================== BINARY DECODER =====================
+function decodeBinary() {
+  const inp = document.getElementById('binary-in').value.trim();
+  const groups = inp.split(/\s+/);
+  let result = '';
+  for (const g of groups) {
+    if (g.length === 8 && /^[01]+$/.test(g)) {
+      result += String.fromCharCode(parseInt(g, 2));
+    }
+  }
+  document.getElementById('binary-result').textContent = result || '// NO VALID BINARY DETECTED //';
+}
+
+// Toggle binary tool
+function toggleTool(id) {
+  const el = document.getElementById(id);
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  const toggleMap = {
+    'caesar-tool': 'caesar-toggle',
+    'chart-tool': 'chart-toggle',
+    'hint2-tool': 'hint2-toggle',
+    'binary-tool': 'binary-toggle'
+  };
+  const tog = document.getElementById(toggleMap[id]);
+  if (tog) tog.textContent = isOpen ? '▼ OPEN' : '▲ CLOSE';
+  if (id === 'caesar-tool' && !isOpen) drawWheel(shift);
+}
+
+
+// ===================== DRAG & DROP PUZZLE (DROP 2) =====================
+const techBinary = {
+  T: '01010100',
+  E: '01000101',
+  C: '01000011',
+  H: '01001000'
+};
+
+const slotsCorrect = { T: false, E: false, C: false, H: false };
+let draggedTile = null;
+let touchTile = null;
+
+function initDragPuzzle() {
+  const bank = document.getElementById('tile-bank');
+  if (!bank) return;
+  bank.innerHTML = '';
+
+  // Shuffle tiles
+  const letters = Object.keys(techBinary).sort(() => Math.random() - 0.5);
+  letters.forEach(letter => {
+    const tile = document.createElement('div');
+    tile.className = 'drag-tile';
+    tile.draggable = true;
+    tile.dataset.letter = letter;
+    tile.textContent = techBinary[letter];
+    tile.id = 'tile-' + letter;
+
+    // Desktop drag
+    tile.addEventListener('dragstart', e => {
+      draggedTile = tile;
+      tile.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', letter);
+    });
+    tile.addEventListener('dragend', () => tile.classList.remove('dragging'));
+
+    // Touch drag
+    tile.addEventListener('touchstart', e => {
+      touchTile = tile;
+      tile.classList.add('dragging');
+    }, { passive: true });
+    tile.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      document.querySelectorAll('.drop-slot').forEach(s => s.classList.remove('over'));
+      if (el && el.closest('.drop-slot')) el.closest('.drop-slot').classList.add('over');
+    }, { passive: false });
+
+    bank.appendChild(tile);
+  });
+
+  updateTechReveal();
+}
+
+function allowDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('over');
+}
+
+function dropTile(e) {
+  e.preventDefault();
+  const slot = e.currentTarget;
+  slot.classList.remove('over');
+  const letter = e.dataTransfer ? e.dataTransfer.getData('text/plain') : (draggedTile ? draggedTile.dataset.letter : null);
+  if (!letter) return;
+  handleDrop(slot, letter);
+}
+
+function touchDrop(e) {
+  if (!touchTile) return;
+  const letter = touchTile.dataset.letter;
+  const touch = e.changedTouches[0];
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  const slot = el ? el.closest('.drop-slot') : null;
+  document.querySelectorAll('.drop-slot').forEach(s => s.classList.remove('over'));
+  touchTile.classList.remove('dragging');
+  if (slot) handleDrop(slot, letter);
+  touchTile = null;
+}
+
+function handleDrop(slot, letter) {
+  const targetLetter = slot.dataset.letter;
+  const correct = techBinary[targetLetter] === techBinary[letter] && targetLetter === letter;
+
+  if (correct) {
+    slot.classList.add('correct');
+    slot.querySelector('.slot-binary').textContent = techBinary[letter];
+    slotsCorrect[targetLetter] = true;
+    const tile = document.getElementById('tile-' + letter);
+    if (tile) tile.classList.add('used');
+    updateTechReveal();
+    checkAllSolved();
+  } else {
+    slot.classList.add('wrong');
+    setTimeout(() => slot.classList.remove('wrong'), 400);
+  }
+}
+
+function updateTechReveal() {
+  const reveal = document.getElementById('tech-reveal');
+  if (!reveal) return;
+  const letters = ['T','E','C','H'];
+  reveal.innerHTML = letters.map(l =>
+    slotsCorrect[l]
+      ? `<span style="color:#0ff">${l}</span>`
+      : `<span style="color:var(--border)">_</span>`
+  ).join('');
+}
+
+function checkAllSolved() {
+  if (Object.values(slotsCorrect).every(Boolean)) {
+    setTimeout(() => {
+      const section = document.getElementById('ans2-section');
+      const msg = document.getElementById('drop2-solved-msg');
+      if (section) section.style.display = 'block';
+      if (msg) msg.textContent = 'TEST OUT OUR TECH. MADE JUST FOR YOU.';
+      markSolved(2);
+    }, 400);
+  }
+}
+
 </script>
 </body>
 </html>
