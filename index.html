@@ -941,15 +941,16 @@
       <div class="open-hint">[ CLICK TO DECODE ]</div>
     </div>
 
-    <!-- DROP 3 - LOCKED -->
-    <div class="cipher-card locked">
+    <!-- DROP 3 - LIVE -->
+    <div class="cipher-card active" onclick="openModal(3)">
       <div class="card-header">
         <span class="drop-label">// DROP_03 //</span>
-        <span class="drop-status status-locked">TRANSMITTING JUN 01</span>
+        <span class="drop-status status-live">LIVE</span>
       </div>
-      <div class="cipher-date">TRANSMITS: JUNE 01, 2026</div>
+      <div class="cipher-date">TRANSMITTED: JUNE 01, 2026</div>
       <div class="cipher-title">THE FINAL MESSAGE</div>
-      <div class="cipher-desc">The last transmission before the door opens.<br>Everything becomes clear.</div>
+      <div class="cipher-desc">The last transmission. The symbol was always the key.<br>Everything becomes clear.</div>
+      <div class="open-hint">[ CLICK TO DECODE ]</div>
     </div>
 
   </div>
@@ -970,6 +971,69 @@
 
 </div>
 
+
+<!-- ===== MODAL DROP 3: SYMBOL CIPHER ===== -->
+<div class="cipher-modal" id="modal-3">
+  <div class="modal-inner">
+    <button class="modal-close" onclick="closeModal()">[ CLOSE ]</button>
+
+    <div class="modal-title">// DROP_03 // THE FINAL MESSAGE</div>
+    <div class="modal-date">TRANSMITTED: JUNE 01, 2026 &nbsp;|&nbsp; TYPE: SYMBOL SUBSTITUTION</div>
+
+    <div class="cipher-text-display" style="font-size:1.1rem; word-break:break-all; line-height:2.2; letter-spacing:0.1em;">
+      ⊤⊠⊕⊳⊕·│⊲·⊦○·◈○⊥⊥│⊤⊥⊕⊦⊤◦·◈○⊥⊕·△⊦◇·◎○·△⊲·⊸○⋃·⊡⊣⊕△⊲⊕◦·⌇⋃⊦⊕·⌬⊤⊠·△⊤·⌬∶⊝⊝⊡⊥◦·◇⊕⊡△⋃⊣·⊤⊠⊕△⊤⊳⊕·⊲◈⊠○○⊣◦
+    </div>
+
+    <div style="font-size:0.7rem; color:var(--dim-green); letter-spacing:0.2em; margin: 0.5rem 0 1.5rem;">
+      // EACH SYMBOL MAPS TO A LETTER. THE KEY IS BELOW. · IS A SPACE. ◦ IS A PERIOD. //
+    </div>
+
+    <!-- SYMBOL KEY -->
+    <div class="tool-section">
+      <div class="tool-header" onclick="toggleTool('symbol-chart')">
+        <span>// SYMBOL KEY //</span>
+        <span id="symbol-chart-toggle">▼ OPEN</span>
+      </div>
+      <div class="tool-body" id="symbol-chart" style="display:none">
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap:0.5rem; font-size:0.8rem; text-align:center;">
+          <div style="color:var(--dim-green); font-size:0.6rem; letter-spacing:0.3em; grid-column:1/-1; margin-bottom:0.3rem;">// LETTERS //</div>
+          <span>△ = A</span><span>▣ = B</span><span>◈ = C</span><span>◇ = D</span><span>⊕ = E</span>
+          <span>⊞ = F</span><span>◎ = G</span><span>⊠ = H</span><span>│ = I</span><span>⌇ = J</span>
+          <span>⌘ = K</span><span>⊣ = L</span><span>⊥ = M</span><span>⊦ = N</span><span>○ = O</span>
+          <span>⊡ = P</span><span>◉ = Q</span><span>⊳ = R</span><span>⊲ = S</span><span>⊤ = T</span>
+          <span>⋃ = U</span><span>⋁ = V</span><span>⋈ = W</span><span>⊗ = X</span><span>⊸ = Y</span>
+          <span>⊘ = Z</span>
+          <div style="color:var(--dim-green); font-size:0.6rem; letter-spacing:0.3em; grid-column:1/-1; margin:0.5rem 0 0.3rem;">// NUMBERS + PUNCTUATION //</div>
+          <span>⌬ = 6</span><span>⊝ = 0</span><span>∶ = :</span><span>◦ = .</span><span>· = SPACE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HINT -->
+    <div class="tool-section">
+      <div class="tool-header" onclick="toggleTool('hint3-tool')">
+        <span>// HINT //</span>
+        <span id="hint3-toggle">▼ REVEAL</span>
+      </div>
+      <div class="tool-body" id="hint3-tool" style="display:none">
+        <div class="hint-box" style="margin:0;">
+          <span class="hint-label">// HINT //</span>
+          The symbol was always the key. Use the chart above — each glyph maps to exactly one letter or character. Work left to right. · separates words.
+        </div>
+      </div>
+    </div>
+
+    <div class="answer-section">
+      <span class="answer-label">// ENTER YOUR DECODED ANSWER //</span>
+      <div style="font-size:0.65rem; color:var(--dim-green); margin-bottom:0.5rem; letter-spacing:0.1em;">Include all punctuation exactly as decoded.</div>
+      <div class="answer-row">
+        <input type="text" class="answer-input" id="ans3" placeholder="TYPE ANSWER HERE" oninput="this.value=this.value.toUpperCase()" style="font-size:0.9rem;">
+        <button class="submit-btn" onclick="checkAnswer(3)">[ SUBMIT ]</button>
+      </div>
+      <div class="answer-feedback" id="fb3"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ===== MODAL DROP 2: BINARY CIPHER ===== -->
 <div class="cipher-modal" id="modal-2">
@@ -1208,6 +1272,7 @@ function openModal(n) {
   document.body.style.overflow = 'hidden';
   if (n === 1) drawWheel(shift);
   if (n === 2) initDragPuzzle();
+  if (n === 3) initSymbolPuzzle();
 }
 
 function closeModal() {
@@ -1308,7 +1373,7 @@ function applyCaesar() {
 const answers = {
   1: 'A WALK INSIDE A COMPUTER',
   2: 'TEST OUT OUR TECH. MADE JUST FOR YOU.',
-  3: null,
+  3: 'THERE IS NO COMMITMENT. COME AND GO AS YOU PLEASE. JUNE 6TH AT 6:00PM. DEPAUL THEATRE SCHOOL.',
 };
 
 const solvedLetters = { 1: 'A', 2: 'L', 3: 'T' };
@@ -1402,7 +1467,9 @@ function toggleTool(id) {
     'caesar-tool': 'caesar-toggle',
     'chart-tool': 'chart-toggle',
     'hint2-tool': 'hint2-toggle',
-    'binary-tool': 'binary-toggle'
+    'binary-tool': 'binary-toggle',
+    'symbol-chart': 'symbol-chart-toggle',
+    'hint3-tool': 'hint3-toggle'
   };
   const tog = document.getElementById(toggleMap[id]);
   if (tog) tog.textContent = isOpen ? '▼ OPEN' : '▲ CLOSE';
